@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+    <title></title>
+
+
+    <meta charset="utf-8">
+
+
+    <!-- iPad/iPhone specific css below, add after your main css >
+    <link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />
+    <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />
+    -->
+
+    <link rel="stylesheet" href="ipad/css/styles.css"/>
+
+
+    <!-- If your application is targeting iOS BEFORE 4.0 you MUST put json2.js from http://www.JSON.org/json2.js into your www directory and include it here -->
+
+
+</head>
+<body >
+
+<script src="http://127.0.0.1:3000/ipad/lib/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/ipad/lib/handlebars.js"></script>
+<script src="http://127.0.0.1:3000/ipad/lib/underscore-min.js"></script>
+<script src="http://127.0.0.1:3000/ipad/lib/helpers.js"></script>
+<script src="http://127.0.0.1:3000/ipad/lib/backbone-min.js"></script>
+<script src="http://127.0.0.1:3000/ipad/lib/resort.js"></script>
+
+<script src="http://127.0.0.1:3000/ipad/lib/md5.js"></script>
+<script type="text/javascript" src="http://127.0.0.1:3000/ipad/lib/query.min.js"></script>
+<script type="text/javascript" src="http://127.0.0.1:3000/ipad/lib/date.js"></script>
+
+<script src="http://127.0.0.1:3000/ipad/js/main.js"></script>
+<script src="http://127.0.0.1:3000/ipad/js/sync.js"></script>
+<script src="http://127.0.0.1:3000/ipad/js/controllers/prizecontroller.js"></script>
+<script src="http://127.0.0.1:3000/ipad/js/models/prizemodel.js"></script>
+<script src="http://127.0.0.1:3000/ipad/js/views/prizeviews.js"></script>
+<script type="text/javascript">
+
+
+        // If you want to prevent dragging, uncomment this section
+//        function preventBehavior(e) {
+//            e.preventDefault();
+//        }
+//        ;
+//        document.addEventListener("touchmove", preventBehavior, false);
+
+        $(function(){
+            startApp();
+        })
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+@import url("stylesheet.css");
+* {
+  font-family: "BitstreamVeraSansRoman","Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+}
+body{
+	background: #024152;
+}
+.listing{
+	margin:0px;
+	padding:0px;
+}
+.listing li{
+	background:#165060;
+	padding: 15px;
+	margin:0 0 10px 0;
+	list-style:none;
+
+}
+
+.listing li a{
+	font-family: "BitstreamVeraSansRoman";
+	color:#5c8590;
+	text-decoration: none;
+	font-size:20px;
+}
+
+.listing li a.deliver,.listing li a.undeliver{
+	background:#0b58c2;
+	color:#ffffff;
+	font-size: 16px;
+	float: right;
+	padding: 5px 10px;
+}
+.next, .previous{
+	display: inline-block;
+	width:150px;
+	padding:5px;
+	text-align: center;
+	background: #3c7889;
+	color:#ffffff;
+	text-decoration: none;
+}
+.next{float:right}
+.previous{float:left}
+.filter{overflow:hidden; margin:0 0 15px 0}
+.delivered, .not_delivered{
+	float:left;
+	display:block;
+	width:48%;
+	text-decoration: none;
+	text-align: center;
+	background: #ffffff;
+	color:#024152;
+	font-size:18px;
+	padding:15px 0;
+}
+.delivered{
+	float: left;
+}
+.not_delivered{float:right}
