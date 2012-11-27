@@ -2,6 +2,8 @@ window.AppRouter = Backbone.Router.extend({
 
     routes:{
         "":"list",
+        "prizes/class/:remote_id":"prizes",
+        "prizes/class/:remote_id/:page":"prizes",
         "wines/:remote_id":"wineDetails",
         "newentry":"newEntry",
         "editentry/:remote_id":"editEntry"
@@ -12,7 +14,18 @@ window.AppRouter = Backbone.Router.extend({
         var self = this;
         this.page =   typeof page !== 'undefined' ? page : 1;
         this.before(function () {
-            self.showView(new WineListView({model:prizes, page:self.page}));
+            self.showView(new prize.classrooms({model:classrooms, page:self.page}));
+        });
+    },
+
+    prizes:function (remote_id,page) {
+        console.log("route: list ");
+        var self = this;
+        this.page =   typeof page !== 'undefined' ? page : 1;
+        
+        this.before(function () {
+              self.showView(new WineListView({model:prizes, class_id:remote_id, page:self.page}));
+            
         });
     },
 

@@ -89,19 +89,30 @@ window.startApp = function () {
     window.db = window.openDatabase("funrun", "1.0", "funrun local db", 200000);
 
     var prizeDAO = new prize.DAO(self.db,window.table);
-    
+    var classDAO = new classroom.DAO(self.db);
     
 
-    
+    classDAO.populate(function () {
+        classDAO.set_up_collections();
+
+    });
+
     prizeDAO.populate(function () {
-        this.templateLoader.load(['wine-list', 'wine-details', 'new','edit', 'prize_livetile'], function () {
+        prizeDAO.set_up_collections();
+        this.templateLoader.load(['wine-list', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
             self.app = new AppRouter();
-            prizeDAO.set_up_collections();
             Backbone.history.start();
             var tablesync = new serversync(db);
             setInterval(function(){
                 tablesync.init();
             },10000);
         });
-    })
+
+    });
+
+
+
+    
+
+    
 }

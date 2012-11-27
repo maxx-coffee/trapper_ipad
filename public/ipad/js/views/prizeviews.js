@@ -23,16 +23,17 @@ window.WineListView = Backbone.View.extend({
     },
     
 
-    query_collection:function(e,page_number){
+    query_collection:function(e,page_number, class_id){
+
       prizeview.collection_control = "query_collection";
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = this.model.query({delivered:0},{limit:10, page:page_number, pager:this.render_page});
+      var collection = prizes.query({delivered:0, classroom_id:class_id},{limit:10, page:page_number, pager:this.render_page});
       return collection;
     },
     delivered_prizes:function(e, page_number){
       prizeview.collection_control = "delivered_prizes";
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = this.model.query({delivered:1},{limit:10, page:page_number, pager:this.render_page});
+      var collection = prizes.query({delivered:1},{limit:10, page:page_number, pager:this.render_page});
 
       return collection;
     },
@@ -66,8 +67,9 @@ window.WineListView = Backbone.View.extend({
     },
 
     render: function(eventName) {
+      console.log(this.model);
         prizeview.collection_control = typeof prizeview.collection_control !== 'undefined' ? prizeview.collection_control : "query_collection";
-        this[prizeview.collection_control]({},this.options.page);
+        this[prizeview.collection_control]({},this.options.page, this.options.class_id);
 
     return this;
          
@@ -77,16 +79,17 @@ window.WineListView = Backbone.View.extend({
       var page_number = clickedtarget.data('page_number');
       prizeview.options.page = page_number;
       this[prizeview.collection_control](e,page_number);
+      e.preventDefault();
     },
     previous_page:function(e){
       var clickedtarget = $(e.currentTarget);
       var page_number = clickedtarget.data('page_number');
       prizeview.options.page = page_number;
       this[prizeview.collection_control](e,page_number);
+      e.preventDefault();
     },
     render_page:function(total_pages, collection){
         var ul = $('ul', $(prizeview.el));
-
         prizeview.element.html(prizeview.template);
         prizeview.element.append(this.pagination);
 
@@ -255,6 +258,52 @@ window.prize.livetile = Backbone.View.extend({
     var livetile_temp = Handlebars.compile($(this.el).find("#prize_livetile").html());
     $(this.el).find("#prize_live_contain").empty().append(livetile_temp({prizes: collection}));
     return this;
+    }
+
+});
+
+
+window.prize.classrooms = Backbone.View.extend({
+
+    initialize: function(options) {
+        var tpl = window.templateLoader;
+
+        this.template = _.template(tpl.get('classrooms'));
+        _.bindAll(this, "render");
+        this.model.bind("change", this.render, this);
+        this.model.bind("reset", this.render, this);
+
+        classview = this;
+        this.element = $(this.el);
+
+
+    },
+
+    render: function(eventName) {
+      var page_number = typeof page_number !== 'undefined' ? page_number : 1;
+      var collection = this.model.query({},{limit:10, page:page_number, pager:this.render_page});
+
+      return this;
+    },
+
+    render_page:function(total_pages, collection){
+      console.log(collection);
+        var ul = $('ul', $(classview.el));
+        classview.element.html(classview.template);
+        classview.element.append(this.pagination);
+
+        
+        var handlebartemplate = Handlebars.compile(classview.element.find("#prizes").html());
+        if(classview.options.page > 1 && typeof classview.options.page != 'undefined'){
+          var previous = parseInt(classview.options.page)-1;
+          classview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
+        }
+        if(classview.options.page < total_pages && typeof classview.options.page != 'undefined'){
+          var next = parseInt(classview.options.page)+1;
+          classview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
+        }
+        classview.element.find("ul").html(handlebartemplate({prizes: collection})); 
+        
     }
 
 });

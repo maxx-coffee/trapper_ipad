@@ -17,6 +17,7 @@ class EntriesController < ApplicationController
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
         :delivered => delivered,
+        :classroom_id => entry.classroom_id,
         :name => entry.name,
         :id => entry.id
       }

@@ -1,5 +1,6 @@
 Api::Application.routes.draw do
   resources :entries
+  resources :classrooms
   match 'sync' => 'entries#sync', :via => [:post]
   match "entries/delete/:id" => 'entries#delete'
   match "entries/added/:time" => 'entries#added'

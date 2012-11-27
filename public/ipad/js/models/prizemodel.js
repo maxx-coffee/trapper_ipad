@@ -78,13 +78,14 @@ _.extend(window.prize.DAO.prototype, {
         this.db.transaction(
             function (tx) {
                 console.log('Dropping WINE table');
-                /*      
+                      
                 tx.executeSql('DROP TABLE IF EXISTS prizes');
                 var sql =
                     "CREATE TABLE IF NOT EXISTS prizes ( " +
                         "remote_id VARCHAR(50) NOT NULL PRIMARY KEY, " +
                         "name VARCHAR(50), " +
                         "delivered INTEGER, " +
+                        "classroom_id VARCHAR(50)  , " +
                         "created_at INTEGER  , " +
                         "updated_at INTEGER)" ;
                 console.log('Creating WINE table');
@@ -105,9 +106,9 @@ _.extend(window.prize.DAO.prototype, {
                 $.each(rows,function(i,row){
                     //alert("'"+row.remote_id+"','"+row.title+"','test','"+row.created_at+"','"+row.created_at+"'");
 
-                    tx.executeSql("INSERT INTO prizes VALUES ('"+row.remote_id+"','"+row.name+"',"+row.delivered+","+row.created_at+","+row.created_at+")");
+                    tx.executeSql("INSERT INTO prizes VALUES ('"+row.remote_id+"','"+row.name+"',"+row.delivered+",'"+row.classroom_id+"',"+row.created_at+","+row.created_at+")");
                 });
-                */
+                
             
                 
             },
