@@ -1,42 +1,47 @@
 window.AppRouter = Backbone.Router.extend({
 
     routes:{
-        "":"list",
-        "prizes/class/:remote_id":"prizes",
-        "prizes/class/:remote_id/:page":"prizes",
+        "":"classrooms",
+        "prizes/class/:remote_id":"users",
+        "user/:user_id/prizes":"prizes",
         "wines/:remote_id":"wineDetails",
         "newentry":"newEntry",
         "editentry/:remote_id":"editEntry"
     },
 
-    list:function (page) {
+    classrooms:function (page) {
         console.log("route: list ");
         var self = this;
         this.page =   typeof page !== 'undefined' ? page : 1;
         this.before(function () {
-            self.showView(new prize.classrooms({model:classrooms, page:self.page}));
+            self.showView(new classroom.classrooms({model:classrooms, page:self.page}));
         });
     },
 
-    prizes:function (remote_id,page) {
+    users:function (remote_id,page) {
         console.log("route: list ");
         var self = this;
         this.page =   typeof page !== 'undefined' ? page : 1;
         
         this.before(function () {
-              self.showView(new WineListView({model:prizes, class_id:remote_id, page:self.page}));
+              self.showView(new user.users({model:users, class_id:remote_id, page:self.page}));
+            
+        });
+    },
+    prizes:function (user_id) {
+        console.log("route: list ");
+        var self = this;
+        this.page =   typeof page !== 'undefined' ? page : 1;
+        
+        this.before(function () {
+            console.log(prizes);
+            console.log(users.get(user_id));
+              self.showView(new user.prizes({model:prizes, user_id:user_id, page:self.page}));
             
         });
     },
 
-    wineDetails:function (id) {
-        console.log('details');
-        var self = this;
-        this.before(function () {
-            var wine = prizes.where({remote_id:id})[0];
-            self.showView(new WineView({model:wine}));
-        });
-    },
+
     newEntry:function(){
         var self = this;
         this.before(function () {

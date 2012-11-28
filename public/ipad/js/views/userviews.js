@@ -1,9 +1,81 @@
-window.WineListView = Backbone.View.extend({
+window.user.users = Backbone.View.extend({
 
     initialize: function(options) {
         var tpl = window.templateLoader;
 
-        this.template = _.template(tpl.get('wine-list'));
+        this.template = _.template(tpl.get('users'));
+        _.bindAll(this, "render");
+        this.model.bind("change", this.render, this);
+        this.model.bind("reset", this.render, this);
+
+        prizeview = this;
+        this.element = $(this.el);
+
+
+    },
+    events:{
+      'click .next':'next_page',
+      'click .previous':'previous_page',
+    },
+    
+
+    query_collection:function(e,page_number, class_id){
+      prizeview.collection_control = "query_collection";
+      var class_id = parseInt(class_id)
+      var page_number = typeof page_number !== 'undefined' ? page_number : 1;
+      var collection = users.query({classroom_id:class_id},{limit:5, page:page_number, pager:this.render_page});
+      return collection;
+    },
+    
+
+    render: function(eventName) {
+        prizeview.collection_control = typeof prizeview.collection_control !== 'undefined' ? prizeview.collection_control : "query_collection";
+        this[prizeview.collection_control]({},this.options.page, this.options.class_id);
+
+    return this;
+         
+    },
+    next_page:function(e){
+      var clickedtarget = $(e.currentTarget);
+      var page_number = clickedtarget.data('page_number');
+      prizeview.options.page = page_number;
+      this[prizeview.collection_control](e,page_number, this.options.class_id);
+      e.preventDefault();
+    },
+    previous_page:function(e){
+      var clickedtarget = $(e.currentTarget);
+      var page_number = clickedtarget.data('page_number');
+      prizeview.options.page = page_number;
+      this[prizeview.collection_control](e,page_number, this.options.class_id);
+      e.preventDefault();
+    },
+    render_page:function(total_pages, collection){
+        var ul = $('ul', $(prizeview.el));
+        prizeview.element.html(prizeview.template);
+ 
+
+        var handlebartemplate = Handlebars.compile(prizeview.element.find("#prizes").html());
+        if(prizeview.options.page > 1 && typeof prizeview.options.page != 'undefined'){
+          var previous = parseInt(prizeview.options.page)-1;
+          prizeview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
+        }
+        if(prizeview.options.page < total_pages && typeof prizeview.options.page != 'undefined'){
+          var next = parseInt(prizeview.options.page)+1;
+          prizeview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
+        }
+        prizeview.element.find("ul").html(handlebartemplate({prizes: collection})); 
+
+    }
+
+    
+});
+
+window.user.prizes = Backbone.View.extend({
+
+    initialize: function(options) {
+        var tpl = window.templateLoader;
+
+        this.template = _.template(tpl.get('users'));
         _.bindAll(this, "render");
         this.model.bind("change", this.render, this);
         this.model.bind("reset", this.render, this);
@@ -23,11 +95,11 @@ window.WineListView = Backbone.View.extend({
     },
     
 
-    query_collection:function(e,page_number, class_id){
-
+    query_collection:function(e,page_number,user_id){
       prizeview.collection_control = "query_collection";
+      var class_id = parseInt(class_id)
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = prizes.query({delivered:0, classroom_id:class_id},{limit:10, page:page_number, pager:this.render_page});
+      var collection = prizes.query({delivered:0, user_id:parseInt(user_id)},{limit:5, page:page_number, pager:this.render_page});
       return collection;
     },
     delivered_prizes:function(e, page_number){
@@ -40,7 +112,7 @@ window.WineListView = Backbone.View.extend({
     flag_delivered:function(e){
 
       var clickedtarget = $(e.currentTarget);
-      var prize = prizes.where({remote_id:clickedtarget.attr("id")})[0];
+      var prize = prizes.get(clickedtarget.attr("id"))
 
 
       
@@ -54,7 +126,7 @@ window.WineListView = Backbone.View.extend({
     flag_undelivered:function(e){
 
       var clickedtarget = $(e.currentTarget);
-      var prize = prizes.where({remote_id:clickedtarget.attr("id")})[0];
+      var prize = prizes.get(clickedtarget.attr("id"))
 
 
       
@@ -67,9 +139,8 @@ window.WineListView = Backbone.View.extend({
     },
 
     render: function(eventName) {
-      console.log(this.model);
         prizeview.collection_control = typeof prizeview.collection_control !== 'undefined' ? prizeview.collection_control : "query_collection";
-        this[prizeview.collection_control]({},this.options.page, this.options.class_id);
+        this[prizeview.collection_control]({},this.options.page, this.options.user_id);
 
     return this;
          
@@ -78,20 +149,20 @@ window.WineListView = Backbone.View.extend({
       var clickedtarget = $(e.currentTarget);
       var page_number = clickedtarget.data('page_number');
       prizeview.options.page = page_number;
-      this[prizeview.collection_control](e,page_number);
+      this[prizeview.collection_control](e,page_number, this.options.user_id);
       e.preventDefault();
     },
     previous_page:function(e){
       var clickedtarget = $(e.currentTarget);
       var page_number = clickedtarget.data('page_number');
       prizeview.options.page = page_number;
-      this[prizeview.collection_control](e,page_number);
+      this[prizeview.collection_control](e,page_number, this.options.user_id);
       e.preventDefault();
     },
     render_page:function(total_pages, collection){
         var ul = $('ul', $(prizeview.el));
         prizeview.element.html(prizeview.template);
-        prizeview.element.append(this.pagination);
+ 
 
         var handlebartemplate = Handlebars.compile(prizeview.element.find("#prizes").html());
         if(prizeview.options.page > 1 && typeof prizeview.options.page != 'undefined'){
@@ -109,40 +180,9 @@ window.WineListView = Backbone.View.extend({
     
 });
 
-window.WineListItemView = Backbone.View.extend({
 
-  tagName: "li",
 
-    initialize: function() {
-        var tpl = window.templateLoader;
-        this.template = _.template(tpl.get('wine-list-item'));
-    this.model.bind("change", this.render, this);
-    this.model.bind("destroy", this.close, this);
-    },
 
-    render: function(eventName) {
-    $(this.el).html(this.template(this.model.toJSON()));
-    return this;
-    }
-
-});
-
-window.WineView = Backbone.View.extend({
-
-    initialize: function() {
-        var tpl = window.templateLoader;
-        this.template = _.template(tpl.get('wine-details'));
-    this.model.bind("change", this.render, this);
-        
-    },
-
-    render: function(eventName) {
-        console.log('render');
-    $(this.el).html(this.template(this.model.toJSON()));
-    return this;
-    }
-
-});
 
 window.NewView = Backbone.View.extend({
 
@@ -196,7 +236,6 @@ window.EditView = Backbone.View.extend({
 
     initialize: function() {
     var tpl = window.templateLoader;
-    this.idAttribute = 'remote_id';
     this.template = _.template(tpl.get('edit'));
     this.model.bind("reset", this.render, this);
     
@@ -241,7 +280,6 @@ window.prize.livetile = Backbone.View.extend({
 
 
     var tpl = window.templateLoader;
-    this.idAttribute = 'remote_id';
     this.template = _.template(tpl.get('prize_livetile'));
     _.bindAll(this, 'render');
     this.model.bind("add", this.render, this);
@@ -263,47 +301,3 @@ window.prize.livetile = Backbone.View.extend({
 });
 
 
-window.prize.classrooms = Backbone.View.extend({
-
-    initialize: function(options) {
-        var tpl = window.templateLoader;
-
-        this.template = _.template(tpl.get('classrooms'));
-        _.bindAll(this, "render");
-        this.model.bind("change", this.render, this);
-        this.model.bind("reset", this.render, this);
-
-        classview = this;
-        this.element = $(this.el);
-
-
-    },
-
-    render: function(eventName) {
-      var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = this.model.query({},{limit:10, page:page_number, pager:this.render_page});
-
-      return this;
-    },
-
-    render_page:function(total_pages, collection){
-      console.log(collection);
-        var ul = $('ul', $(classview.el));
-        classview.element.html(classview.template);
-        classview.element.append(this.pagination);
-
-        
-        var handlebartemplate = Handlebars.compile(classview.element.find("#prizes").html());
-        if(classview.options.page > 1 && typeof classview.options.page != 'undefined'){
-          var previous = parseInt(classview.options.page)-1;
-          classview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
-        }
-        if(classview.options.page < total_pages && typeof classview.options.page != 'undefined'){
-          var next = parseInt(classview.options.page)+1;
-          classview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
-        }
-        classview.element.find("ul").html(handlebartemplate({prizes: collection})); 
-        
-    }
-
-});

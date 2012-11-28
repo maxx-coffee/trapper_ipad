@@ -9,7 +9,6 @@ class ClassroomsController < ApplicationController
     @classrooms.each do |classroom|
       
       classrooms << {
-        :remote_id => classroom.remote_id,
         :created_at => classroom.created_at.to_i * 1000,
         :updated_at => classroom.updated_at.to_i * 1000 ,
         :name => classroom.name,
@@ -29,7 +28,6 @@ class ClassroomsController < ApplicationController
     @classrooms.each do |classroom|
       
       classrooms << {
-        :remote_id => classroom.remote_id,
         :created_at => classroom.created_at.to_i * 1000,
         :updated_at => classroom.updated_at.to_i * 1000 ,
         :name => classroom.name,
@@ -50,7 +48,6 @@ class ClassroomsController < ApplicationController
         delivered = 1
       end
       classrooms << {
-        :remote_id => classroom.remote_id,
         :created_at => classroom.created_at.to_i * 1000,
         :updated_at => classroom.updated_at.to_i * 1000 ,
         :name => classroom.name,
@@ -83,7 +80,7 @@ class ClassroomsController < ApplicationController
 
     classrooms.each do |classroom|
       classroom = classroom[1]
-      @classroom = classroom.find_or_create_by_remote_id(classroom['remote_id']);
+      @classroom = classroom.find_or_create_by_id(classroom['id']);
       logger.debug("classroom remote id #{classroom['created_at']}")
       @classroom.update_attributes({:delivered => classroom['delivered']})
     end

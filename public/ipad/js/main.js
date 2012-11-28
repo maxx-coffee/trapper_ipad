@@ -90,16 +90,21 @@ window.startApp = function () {
 
     var prizeDAO = new prize.DAO(self.db,window.table);
     var classDAO = new classroom.DAO(self.db);
+    var userDAO = new user.DAO(self.db);
     
 
-    classDAO.populate(function () {
+    userDAO.check_existence(function () {
+        userDAO.set_up_collections();
+
+    });
+    classDAO.check_existence(function () {
         classDAO.set_up_collections();
 
     });
 
-    prizeDAO.populate(function () {
+    prizeDAO.check_existence(function () {
         prizeDAO.set_up_collections();
-        this.templateLoader.load(['wine-list', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
+        this.templateLoader.load(['users', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
             self.app = new AppRouter();
             Backbone.history.start();
             var tablesync = new serversync(db);

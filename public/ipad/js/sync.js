@@ -22,7 +22,6 @@ serversync.prototype = {
       
       $.each(self.collections,function(k,v){
         var collection = window[v];
-        collection.fetch({});
 
         var data = collection.query({
           $or:{
@@ -69,8 +68,8 @@ serversync.prototype = {
         console.log(data);
         var collection = window.prizes;
         $.each(data,function(i, row){
-          row.hash = row.remote_id;
-          delete row.remote_id;
+          row.hash = row.id;
+          delete row.id;
          collection.create(row);
         });
       });

@@ -1,6 +1,7 @@
 window.prize = window.prize || {};
 window.prize.DAO = function (db) {
     this.db = db;
+    prize.prizeDAO = this;
        
 };
 
@@ -33,11 +34,11 @@ _.extend(window.prize.DAO.prototype, {
 
             function (tx) {
 
-                var sql = "INSERT INTO prizes VALUES ('"+model_atts.hash+"','"+model_atts.name+"',"+model_atts.delivered+","+$.now()+","+$.now()+")";
+                var sql = "INSERT INTO prizes VALUES ("+model_atts.hash+",'"+model_atts.name+"',"+model_atts.delivered+",'"+model_atts.classroom_id+"',"+$.now()+","+$.now()+")";
                 tx.executeSql(sql, [], function (tx, results) {
                     var hash = model_atts.hash;
                     
-                    model.set({remote_id: hash});
+                    model.set({id: hash});
                     callback(model.toJSON());
                 });
             },
@@ -49,10 +50,11 @@ _.extend(window.prize.DAO.prototype, {
     },
 
     update:function (model, callback, table) {
+        alert("update");
         var model_atts = model.toJSON();
         this.db.transaction(
             function (tx) {
-                tx.executeSql('UPDATE prizes SET delivered='+model_atts.delivered+',updated_at ='+model_atts.updated_at+' WHERE remote_id="'+model_atts.remote_id+'"',[], function (tx, results) {
+                tx.executeSql('UPDATE prizes SET delivered='+model_atts.delivered+',updated_at ='+model_atts.updated_at+' WHERE id="'+model_atts.hash+'"',[], function (tx, results) {
                     
                     callback(model.toJSON());
                 });
@@ -71,6 +73,30 @@ _.extend(window.prize.DAO.prototype, {
     find:function (model, callback) {
 //        TODO: Implement
     },
+    check_existence:function(callback){
+        this.db.transaction(
+            function (tx) {
+
+                var sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='prizes';";
+                tx.executeSql(sql, [], function (tx, results) {
+                    var len = results.rows.length;
+
+                    if(len <= 0){
+                      prize.prizeDAO.populate();
+                    }
+                    
+                });
+            },
+            function (tx, error) {
+                console.log(error);
+                alert('Transaction error ' + error.code);
+            },
+            function (tx) {
+                callback();
+
+            }
+        );
+    },
 
 //  Populate Wine table with sample data
     populate:function (callback, table) {
@@ -82,10 +108,10 @@ _.extend(window.prize.DAO.prototype, {
                 tx.executeSql('DROP TABLE IF EXISTS prizes');
                 var sql =
                     "CREATE TABLE IF NOT EXISTS prizes ( " +
-                        "remote_id VARCHAR(50) NOT NULL PRIMARY KEY, " +
+                        "id INTEGER NOT NULL PRIMARY KEY, " +
                         "name VARCHAR(50), " +
                         "delivered INTEGER, " +
-                        "classroom_id VARCHAR(50)  , " +
+                        "user_id INTEGER  , " +
                         "created_at INTEGER  , " +
                         "updated_at INTEGER)" ;
                 console.log('Creating WINE table');
@@ -97,7 +123,6 @@ _.extend(window.prize.DAO.prototype, {
                  });
                 var rows = [];
                 $.get('http://127.0.0.1:3000/entries.json', function(data) {
-                    console.log(data);
                   $.each(data,function(i,row){
                     rows.push(row);
                   });
@@ -106,7 +131,7 @@ _.extend(window.prize.DAO.prototype, {
                 $.each(rows,function(i,row){
                     //alert("'"+row.remote_id+"','"+row.title+"','test','"+row.created_at+"','"+row.created_at+"'");
 
-                    tx.executeSql("INSERT INTO prizes VALUES ('"+row.remote_id+"','"+row.name+"',"+row.delivered+",'"+row.classroom_id+"',"+row.created_at+","+row.created_at+")");
+                    tx.executeSql("INSERT INTO prizes VALUES ("+row.id+",'"+row.name+"',"+row.delivered+",'"+row.user_id+"',"+row.created_at+","+row.created_at+")");
                 });
                 
             
@@ -116,11 +141,8 @@ _.extend(window.prize.DAO.prototype, {
             function (tx, error) {
                 console.log(error);
                 alert('Transaction error ' + error.code);
-            },
-            function (tx) {
-                callback();
-
             }
+            
         );
 
     },
@@ -132,15 +154,13 @@ _.extend(window.prize.DAO.prototype, {
     }
 });
 
-window.prize.model = Backbone.Model.extend({
+window.prize.model = Backbone.RelationalModel.extend({
 	urlRoot: "http://coenraets.org/backbone-cellar/part1/api/wines",
-	idAttribute: "remote_id",
     dao: prize.DAO
 });
 
 window.prize.collection = Backbone.QueryCollection.extend({
 	model: prize.model,
-	idAttribute: "remote_id",
 	url: "http://coenraets.org/backbone-cellar/part1/api/wines",
     dao: prize.DAO,
     

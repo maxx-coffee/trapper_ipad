@@ -1,28 +1,23 @@
-class EntriesController < ApplicationController
-  # GET /entries
-  # GET /entries.json
+class UsersController < ApplicationController
+  # GET /users
+  # GET /users.json
 
   require 'digest/md5'
   def index
-    @entries = Entry.all
-    entries = Array.new
-    @entries.each do |entry|
-      if entry.delivered == false
-        delivered = 0
-      else
-        delivered = 1
-      end
-      entries << {
+    @users = User.all
+    users = Array.new
+    @users.each do |entry|
+      
+      users << {
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
-        :delivered => delivered,
-        :user_id => entry.user_id,
+        :classroom_id => entry.classroom_id,
         :name => entry.name,
         :id => entry.id
       }
     end
-    render json: entries
+    render json: users
   end
   def status
     render json: {status:"ok"} 
@@ -30,72 +25,69 @@ class EntriesController < ApplicationController
 
   def added
      time = params[:time]
-    @entries = Entry.added_since_last_sync(time)
-    entries = Array.new
-    @entries.each do |entry|
+    @users = Entry.added_since_last_sync(time)
+    users = Array.new
+    @users.each do |entry|
       if entry.delivered == false
         delivered = 0
       else
         delivered = 1
       end
-      entries << {
+      users << {
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
-        :user_id => entry.user_id,
-        :delivered => delivered,
+        :classroom_id => entry.classroom_id,
         :name => entry.name,
         :id => entry.id
       }
     end
-    render json: entries
+    render json: users
   end
 
   def updated
     time = params[:time]
-    @entries = Entry.updated_since_last_sync(time)
-    entries = Array.new
-    @entries.each do |entry|
+    @users = Entry.updated_since_last_sync(time)
+    users = Array.new
+    @users.each do |entry|
       if entry.delivered == false
         delivered = 0
       else
         delivered = 1
       end
-      entries << {
+      users << {
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
-        :user_id => entry.user_id,
-        :delivered => delivered,
         :name => entry.name,
         :id => entry.id
       }
     end
-    render json: entries
+    render json: users
   end
 
-  # GET /entries/1
-  # GET /entries/1.json
+  # GET /users/1
+  # GET /users/1.json
   def show
     @entry = Entry.find(params[:id])
 
     render json: @entry
   end
 
-  # GET /entries/new
-  # GET /entries/new.json
+  # GET /users/new
+  # GET /users/new.json
   def new
     @entry = Entry.new
 
     render json: @entry
   end
 
-  # POST /entries
-  # POST /entries.json
+  # POST /users
+  # POST /users.json
   def sync
-    entries = params[:prizes]
+    users = params[:prizes]
 
-    entries.each do |entry|
+    users.each do |entry|
       entry = entry[1]
       @entry = Entry.find_or_create_by_id(entry['id']);
       logger.debug("entry remote id #{entry['created_at']}")
@@ -106,7 +98,7 @@ class EntriesController < ApplicationController
 
   def create
     /#
-    params[:entries].each do |entry|
+    params[:users].each do |entry|
       entry = ActiveSupport::JSON.decode(entry)
       @entry = Entry.new(entry)
       if @entry.remote_id.nil?
@@ -114,7 +106,7 @@ class EntriesController < ApplicationController
       end
       @entry.save
     end
-    render json: @entries
+    render json: @users
     #/
     @entry = Entry.new(params[:entry])
     @entry.classroom_id = "5121d1570117d3209fefcf32dcd329a0";
@@ -127,8 +119,8 @@ class EntriesController < ApplicationController
     
   end
 
-  # PATCH/PUT /entries/1
-  # PATCH/PUT /entries/1.json
+  # PATCH/PUT /users/1
+  # PATCH/PUT /users/1.json
   def update
     @entry = Entry.find(params[:id])
 
@@ -139,8 +131,8 @@ class EntriesController < ApplicationController
     end
   end
 
-  # DELETE /entries/1
-  # DELETE /entries/1.json
+  # DELETE /users/1
+  # DELETE /users/1.json
   def destroy
     @entry = Entry.find(params[:id])
     @entry.destroy

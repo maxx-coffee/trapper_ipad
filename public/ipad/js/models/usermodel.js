@@ -1,17 +1,17 @@
-window.classroom = window.classroom || {};
-window.classroom.DAO = function (db) {
+window.user = window.user || {};
+window.user.DAO = function (db) {
     this.db = db;
-    classroom.classDAO = this;
+    user.userDAO = this;
        
 };
 
-_.extend(window.classroom.DAO.prototype, {
+_.extend(window.user.DAO.prototype, {
     
     findAll:function (callback,table) {
         this.db.transaction(
             function (tx) {
 
-                var sql = "SELECT * FROM classrooms ORDER BY name";
+                var sql = "SELECT * FROM users ORDER BY name";
                 tx.executeSql(sql, [], function (tx, results) {
                     var len = results.rows.length;
                     var wines = [];
@@ -28,7 +28,6 @@ _.extend(window.classroom.DAO.prototype, {
     },
 
     create:function (model, callback) {
-       
 
     },
 
@@ -47,12 +46,12 @@ _.extend(window.classroom.DAO.prototype, {
         this.db.transaction(
             function (tx) {
 
-                var sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='classrooms';";
+                var sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='users';";
                 tx.executeSql(sql, [], function (tx, results) {
                     var len = results.rows.length;
 
                     if(len <= 0){
-                      classroom.classDAO.populate();
+                      user.userDAO.populate();
                     }
                     
                 });
@@ -75,11 +74,12 @@ _.extend(window.classroom.DAO.prototype, {
             function (tx) {
                 console.log('Dropping WINE table');
                    
-                tx.executeSql('DROP TABLE IF EXISTS classrooms');
+                tx.executeSql('DROP TABLE IF EXISTS users');
                 var sql =
-                    "CREATE TABLE IF NOT EXISTS classrooms ( " +
+                    "CREATE TABLE IF NOT EXISTS users ( " +
                         "id INTEGER NOT NULL PRIMARY KEY, " +
                         "name VARCHAR(50), " +
+                        "classroom_id INTEGER,"+
                         "created_at INTEGER  , " +
                         "updated_at INTEGER)" ;
                 console.log('Creating WINE table');
@@ -90,8 +90,7 @@ _.extend(window.classroom.DAO.prototype, {
 
                  });
                 var rows = [];
-                $.get('http://127.0.0.1:3000/classrooms.json', function(data) {
-                    console.log(data);
+                $.get('http://127.0.0.1:3000/users.json', function(data) {
                   $.each(data,function(i,row){
                     rows.push(row);
                   });
@@ -99,8 +98,7 @@ _.extend(window.classroom.DAO.prototype, {
                 });
                 $.each(rows,function(i,row){
                     //alert("'"+row.remote_id+"','"+row.title+"','test','"+row.created_at+"','"+row.created_at+"'");
-
-                    tx.executeSql("INSERT INTO classrooms VALUES ('"+row.id+"','"+row.name+"',"+row.created_at+","+row.created_at+")");
+                    tx.executeSql("INSERT INTO users VALUES ('"+row.id+"','"+row.name+"','"+row.classroom_id+"',"+row.created_at+","+row.created_at+")");
                 });
                 
             
@@ -116,21 +114,18 @@ _.extend(window.classroom.DAO.prototype, {
     },
 
     set_up_collections:function(){
-        window.classrooms = new classroom.collection;
-        window.classrooms.fetch();
+        window.users = new user.collection;
+        window.users.fetch();
     }
 });
 
-window.classroom.model = Backbone.RelationalModel.extend({
-	idAttribute: "remote_id",
-    dao: classroom.DAO,
-
+window.user.model = Backbone.Model.extend({
+    dao: user.DAO,    
 });
 
-window.classroom.collection = Backbone.QueryCollection.extend({
-	model: classroom.model,
-	idAttribute: "remote_id",
-    dao: classroom.DAO,
+window.user.collection = Backbone.QueryCollection.extend({
+	model: user.model,
+    dao: user.DAO,
     
     comparator: function(model){
       return -model.get("created_at");
