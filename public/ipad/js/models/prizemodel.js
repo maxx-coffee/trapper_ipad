@@ -54,8 +54,7 @@ _.extend(window.prize.DAO.prototype, {
         var model_atts = model.toJSON();
         this.db.transaction(
             function (tx) {
-                tx.executeSql('UPDATE prizes SET delivered='+model_atts.delivered+',updated_at ='+model_atts.updated_at+' WHERE id="'+model_atts.hash+'"',[], function (tx, results) {
-                    
+                tx.executeSql('UPDATE prizes SET delivered='+model_atts.delivered+',updated_at ='+model_atts.updated_at+' WHERE id="'+model_atts.id+'"',[], function (tx, results) {
                     callback(model.toJSON());
                 });
                 //tx.executeSql("INSERT INTO "+table+" VALUES ('"+model.remote_id+"','"+model.title+"','"+model.description+"','"+model.created_at+"','"+model.updated_at+"',0)");

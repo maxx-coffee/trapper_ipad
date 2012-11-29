@@ -104,7 +104,7 @@ window.startApp = function () {
 
     prizeDAO.check_existence(function () {
         prizeDAO.set_up_collections();
-        this.templateLoader.load(['users', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
+        this.templateLoader.load(['users','prizes', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
             self.app = new AppRouter();
             Backbone.history.start();
             var tablesync = new serversync(db);

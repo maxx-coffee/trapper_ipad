@@ -2,6 +2,7 @@ window.AppRouter = Backbone.Router.extend({
 
     routes:{
         "":"classrooms",
+        "classrooms":"classrooms",
         "prizes/class/:remote_id":"users",
         "user/:user_id/prizes":"prizes",
         "wines/:remote_id":"wineDetails",

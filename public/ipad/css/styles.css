@@ -6,6 +6,13 @@
 body{
 	background: #024152;
 }
+#header{margin:0 0 15px 0; padding: 30px 0 15px 0}
+#header h2{color:#ffffff; font-size:30px; display:inline}
+#header form{
+	display:inline-block;
+	width: 500px
+}
+#header form input{border-radius:3px; border:0px;font-size: 18px; padding:5px; width: 300px; margin: 0 0 0 10px}
 .listing{
 	margin:0px;
 	padding:0px;
@@ -24,14 +31,16 @@ body{
 	text-decoration: none;
 	font-size:20px;
 }
-
-.listing li a.deliver,.listing li a.undeliver{
+.listing li a.btn{
 	background:#0b58c2;
 	color:#ffffff;
 	font-size: 16px;
 	float: right;
 	padding: 5px 10px;
+	margin: 0 0 0 10px;
 }
+
+
 .next, .previous{
 	display: inline-block;
 	width:150px;
