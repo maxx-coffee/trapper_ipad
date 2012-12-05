@@ -1,18 +1,114 @@
 @import url("stylesheet.css");
+@import url("reset.css");
 * {
   font-family: "BitstreamVeraSansRoman","Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
 }
-body{
+body, html{
 	background: #024152;
+	padding:0px;
+	margin:0px;
+	height: 100%;
+	width:100%;
 }
-#header{margin:0 0 15px 0; padding: 30px 0 15px 0}
-#header h2{color:#ffffff; font-size:30px; display:inline}
+body #content{padding:25px; width: auto; overflow: hidden;}
+#main_nav{overflow:hidden;padding:0;margin:0; width:150px;float: left;height: 100%}
+#main_nav li{ text-align: center;list-style:none;clear:both; display:block; height:33%; margin: 0 0 10px 0;vertical-align: }
+
+#main_nav li a{color:#ffffff; text-decoration: none; display:block; font-size: 18px;height: 100%; }
+#main_nav li.users{background: #0b58c2}
+#main_nav li.users a{padding:50px 0 0 0}
+#main_nav .stats{background:#be1e4a}
+#main_nav li.stats a{padding:70px 0 0 0}
+#main_nav .support{background: #009201}
+#main_nav li.support a{padding:60px 0 0 0}
+#header{margin:0 0 15px 0; padding: 30px 0 45px 0;overflow: hidden;}
+#header .date{font-size:18px;color:#ffffff; float:left; margin:0 15px 0 ;padding: 10px 0 0 0}
+#header h2{color:#ffffff; font-size:30px; display:inline-block; float: left;position: relative;}
+#header h2 span{
+  display:block;
+  position: absolute;
+  bottom: -50px;
+  font-size: 14px;
+  width: 200px;
+}
+#header h2 span a{padding: 5px 8px; background: #009201; display: inline-block; margin: 5px 0 0 0; border-radius: 3px; color:#ffffff; text-decoration: none;}
 #header form{
 	display:inline-block;
 	width: 500px
 }
+
 #header form input{border-radius:3px; border:0px;font-size: 18px; padding:5px; width: 300px; margin: 0 0 0 10px}
+#header .support_btns{float: right;width: 400px}
+#header .support_btns a{float: right;}
+#header .support_btns .reminders_btn{
+	display: block;
+	background: url(../img/reminder_btn.png);
+	width: 180px;
+	height: 43px;
+	margin: 0 0 0 15px;
+}
+#header .support_btns .support_btn{
+	display: block;
+	background: url(../img/support_btn.png);
+	width: 180px;
+	height: 43px;
+	
+}
+#request_form_contain{
+	display: none;
+}
+#request_form{width:600px;padding: 10px 15px 10px 10px; }
+#request_form h2{
+	color:#363636;
+	padding: 0 0 10px 0;
+	margin: 0 0 10px 0;
+	border-bottom:1px solid #c6c6c6;
+}
+#request_form h2 span{
+	display:inline-block;
+	float: right;
+	font-size: 12px;
+}
+#request_form #subject{ 
+	width: 390px;
+	float: left;
+	padding: 3px 5px;
+	margin: 0 0 10px 0;
+}
+#request_form select{
+	width:170px;
+	margin:5px 0 0 10px;
+	float: right;
+}
+#request_form textarea{
+	width:583px;
+	padding: 5px;
+}
+#reminders_contain{display: none;}
+#reminders{
+  border-radius:3px;
+  background: url('../img/reminder_bg.png') repeat-y #fefca9;
+  width: 580px;
+  overflow: auto;
+  margin: 5px 10px 10px 5px;
+  -moz-box-shadow: 3px 3px 5px rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, .5);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, .5);
+  height: 600px;
+}
+#reminders li{
+	background: url('../img/reminder_lines.png');
+	height: 20px;
+	padding: 5px 0;
+	margin: -1px 0 0 0;
+
+}
+#reminders li:first-child{margin: 40px 0 00}
+#reminders li:last-child{background: none}
+#reminders li span{color:#d95b34;}
+#reminders li span.number{display: inline-block;width: 50px; text-align: center;font-size: 12px;}
+#reminders li span.info{font-size: 12px; padding: 0 0 0 10px}
 .listing{
 	margin:0px;
 	padding:0px;
@@ -68,3 +164,33 @@ body{
 	float: left;
 }
 .not_delivered{float:right}
+
+.lap_widget{float:right}
+.lap_widget .lap_btn{
+	color:#ffffff;
+	background: #019aac;
+	padding:3px 5px;
+	font-size:16px;
+	border-radius:4px;
+	margin: 0 5px 0 0;
+}
+.lap_widget .increment{
+	color:#ffffff;
+	background:#5838b3;
+	padding:5px 0;
+	width: 35px;
+	display: inline-block;
+	text-align: center;
+	border-radius:4px;
+	margin:0 0 0 10px ;
+}
+.lap_widget input{
+	width: 60px;
+	font-size:18px;
+	border-radius:3px;
+	padding:5px 0;
+	border:0px;
+	text-align: center;
+	margin: 0 0 0 15px;
+	color:#024152;
+}

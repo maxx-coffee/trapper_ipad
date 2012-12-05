@@ -12,6 +12,7 @@ class UsersController < ApplicationController
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
+        :laps => entry.laps,
         :classroom_id => entry.classroom_id,
         :name => entry.name,
         :id => entry.id
@@ -36,6 +37,7 @@ class UsersController < ApplicationController
       users << {
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
+        :laps => entry.laps,
         :updated_at => entry.updated_at.to_i * 1000 ,
         :classroom_id => entry.classroom_id,
         :name => entry.name,
@@ -58,6 +60,7 @@ class UsersController < ApplicationController
       users << {
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
+        :laps => entry.laps,
         :updated_at => entry.updated_at.to_i * 1000 ,
         :name => entry.name,
         :id => entry.id
@@ -89,9 +92,9 @@ class UsersController < ApplicationController
 
     users.each do |entry|
       entry = entry[1]
-      @entry = Entry.find_or_create_by_id(entry['id']);
+      @entry = User.find_or_create_by_id(entry['id']);
       logger.debug("entry remote id #{entry['created_at']}")
-      @entry.update_attributes({:delivered => entry['delivered']})
+      @entry.update_attributes({:laps => entry['laps']})
     end
 
   end
@@ -122,7 +125,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
-    @entry = Entry.find(params[:id])
+    @entry = User.find(params[:id])
 
     if @entry.update_attributes(params[:entry])
       head :no_content

@@ -26,14 +26,74 @@ _.extend(window.classroom.DAO.prototype, {
             }
         );
     },
+create:function (model, callback, table) {
+        alert("create");
+        var model_atts = model.toJSON();
+        
+        var keys =[];
+        var values = [];
+        $.each(model_atts, function(k, v) {
+          
+          keys.push(k);
+          values.push("'"+v+"'");
+        });
+        console.log(keys);
+        console.log(values);
+        
+        this.db.transaction(
 
-    create:function (model, callback) {
-       
+            function (tx) {
+
+                var sql = "INSERT INTO support_requests ("+keys+") VALUES ("+values+")";
+                console.log(sql);
+                tx.executeSql(sql, [], function (tx, results) {
+                    var hash = model_atts.hash;
+                    
+                    model.set({id: hash});
+                    callback(model.toJSON());
+                });
+            },
+            function (tx, error) {
+                alert("Transaction Error: " + error);
+            }
+        );
+
 
     },
 
-    update:function (model, callback) {
-       
+    update:function (model,options, callback) {
+        alert("update");
+        console.log(options);
+        var model_atts = model.toJSON();
+        var model_json = JSON.stringify(model_atts);
+        
+        var query_string =[];
+        if (options.changes){
+          $.each(options.changes, function(k, v) {
+              query_string.push( k+'='+model_atts[k])
+          });
+        }else{
+          $.each(model_atts, function(k, v) {
+              query_string.push( k+'="'+v+'"')
+          });
+        }
+        console.log(query_string);
+        console.log(model_atts);
+
+        
+        this.db.transaction(
+            function (tx) {
+                tx.executeSql('UPDATE classrooms SET '+query_string+' WHERE id="'+model_atts.id+'"',[], function (tx, results) {
+                    callback(model.toJSON());
+                });
+                
+            },
+            function (tx, error) {
+                alert("Transaction Error: " + error);
+            }
+        );
+
+
     },
 
     destroy:function (model, callback) {
@@ -43,6 +103,7 @@ _.extend(window.classroom.DAO.prototype, {
     find:function (model, callback) {
 //        TODO: Implement
     },
+    
     check_existence:function(callback){
         this.db.transaction(
             function (tx) {
@@ -80,6 +141,7 @@ _.extend(window.classroom.DAO.prototype, {
                     "CREATE TABLE IF NOT EXISTS classrooms ( " +
                         "id INTEGER NOT NULL PRIMARY KEY, " +
                         "name VARCHAR(50), " +
+                        "laps_entered INTEGER,"+
                         "created_at INTEGER  , " +
                         "updated_at INTEGER)" ;
                 console.log('Creating WINE table');
@@ -98,9 +160,20 @@ _.extend(window.classroom.DAO.prototype, {
                   
                 });
                 $.each(rows,function(i,row){
-                    //alert("'"+row.remote_id+"','"+row.title+"','test','"+row.created_at+"','"+row.created_at+"'");
+                    var keys =[];
+                    var values = [];
+                    $.each(row, function(k, v) {
+                      if (k == "hash"){
+                        k = "id";
+                      }
+                      keys.push(k);
+                      values.push("'"+v+"'");
+                    });
 
-                    tx.executeSql("INSERT INTO classrooms VALUES ('"+row.id+"','"+row.name+"',"+row.created_at+","+row.created_at+")");
+
+                    //alert("'"+row.remote_id+"','"+row.title+"','test','"+row.created_at+"','"+row.created_at+"'");
+                    var sql = "INSERT INTO classrooms ("+keys+") VALUES ("+values+")";
+                    tx.executeSql(sql);
                 });
                 
             
@@ -122,14 +195,12 @@ _.extend(window.classroom.DAO.prototype, {
 });
 
 window.classroom.model = Backbone.RelationalModel.extend({
-	idAttribute: "remote_id",
     dao: classroom.DAO,
 
 });
 
 window.classroom.collection = Backbone.QueryCollection.extend({
 	model: classroom.model,
-	idAttribute: "remote_id",
     dao: classroom.DAO,
     
     comparator: function(model){

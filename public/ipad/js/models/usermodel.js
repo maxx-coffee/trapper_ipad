@@ -28,11 +28,43 @@ _.extend(window.user.DAO.prototype, {
     },
 
     create:function (model, callback) {
-
+        alert("create");
+        callback(model.toJSON());
     },
 
-    update:function (model, callback) {
-       
+    update:function (model,options, callback) {
+        alert("update");
+        console.log(options);
+        var model_atts = model.toJSON();
+        var model_json = JSON.stringify(model_atts);
+        
+        var query_string =[];
+        if (options.changes){
+          $.each(options.changes, function(k, v) {
+              query_string.push( k+'='+model_atts[k])
+          });
+        }else{
+          $.each(model_atts, function(k, v) {
+              query_string.push( k+'="'+v+'"')
+          });
+        }
+        console.log(query_string);
+
+
+        
+        this.db.transaction(
+            function (tx) {
+                tx.executeSql('UPDATE users SET '+query_string+' WHERE id="'+model_atts.id+'"',[], function (tx, results) {
+                    callback(model.toJSON());
+                });
+                
+            },
+            function (tx, error) {
+                alert("Transaction Error: " + error);
+            }
+        );
+
+
     },
 
     destroy:function (model, callback) {
@@ -68,11 +100,11 @@ _.extend(window.user.DAO.prototype, {
     },
 
 //  Populate Wine table with sample data
-    populate:function () {
+    populate:function (callback) {
         
         this.db.transaction(
             function (tx) {
-                console.log('Dropping WINE table');
+                console.log('Dropping user table');
                    
                 tx.executeSql('DROP TABLE IF EXISTS users');
                 var sql =
@@ -80,6 +112,7 @@ _.extend(window.user.DAO.prototype, {
                         "id INTEGER NOT NULL PRIMARY KEY, " +
                         "name VARCHAR(50), " +
                         "classroom_id INTEGER,"+
+                        "laps INTEGER,"+
                         "created_at INTEGER  , " +
                         "updated_at INTEGER)" ;
                 console.log('Creating WINE table');
@@ -98,10 +131,10 @@ _.extend(window.user.DAO.prototype, {
                 });
                 $.each(rows,function(i,row){
                     //alert("'"+row.remote_id+"','"+row.title+"','test','"+row.created_at+"','"+row.created_at+"'");
-                    tx.executeSql("INSERT INTO users VALUES ('"+row.id+"','"+row.name+"','"+row.classroom_id+"',"+row.created_at+","+row.created_at+")");
+                    tx.executeSql("INSERT INTO users VALUES ('"+row.id+"','"+row.name+"','"+row.classroom_id+"','"+row.laps+"',"+row.created_at+","+row.created_at+")");
                 });
                 
-            
+                callback();
                 
             },
 

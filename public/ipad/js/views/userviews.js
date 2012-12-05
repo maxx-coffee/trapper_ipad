@@ -4,40 +4,44 @@ window.user.users = Backbone.View.extend({
         var tpl = window.templateLoader;
 
         this.template = _.template(tpl.get('users'));
-        _.bindAll(this, "render");
-        this.model.bind("change", this.render, this);
+
+        this.model.bind("add", this.render, this);
         this.model.bind("reset", this.render, this);
 
-        prizeview = this;
+        renderedview = this;
         this.element = $(this.el);
-        prizeview.element.html(prizeview.template);
+        this.class_id = parseInt(this.options.class_id);
+        renderedview.element.html(renderedview.template);
         this.user_template = this.element.find("#prizes").html();
-        console.log(this.user_template);
+        renderedview = this;
         
 
     },
     events:{
       'click .next':'next_page',
       'click .previous':'previous_page',
-      'keyup': 'search',
+      'keyup #keywords': 'search',
+      'click .lap_btn': 'set_lap',
+      'click .increment': "add_subtract",
+      'click .laps_entered':"laps_entered"
     },
     
 
     query_collection:function(e,page_number, class_id){
-      prizeview.collection_control = "query_collection";
-      var class_id = parseInt(class_id)
+      renderedview.collection_control = "query_collection";
+      var class_id = this.class_id;
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = users.query({classroom_id:class_id},{limit:5, page:page_number, pager:this.render_page});
+      var collection = users.query({classroom_id:class_id},{limit:10, page:page_number, pager:this.render_page});
 
       return collection;
     },
     
 
     render: function(eventName) {
-        
-        prizeview.collection_control = typeof prizeview.collection_control !== 'undefined' ? prizeview.collection_control : "query_collection";
-        this[prizeview.collection_control]({},this.options.page, this.options.class_id);
-
+        if (renderedview == this){
+          renderedview.collection_control = typeof renderedview.collection_control !== 'undefined' ? renderedview.collection_control : "query_collection";
+          this[renderedview.collection_control]({},this.options.page, this.options.class_id);
+        }
     return this;
          
     },
@@ -45,44 +49,88 @@ window.user.users = Backbone.View.extend({
       e.preventDefault();
       var clickedtarget = $(e.currentTarget);
       var page_number = clickedtarget.data('page_number');
-      prizeview.options.page = page_number;
-      this[prizeview.collection_control](e,page_number, this.options.class_id);
+      renderedview.options.page = page_number;
+      this[renderedview.collection_control](e,page_number, this.options.class_id);
       
     },
     previous_page:function(e){
       e.preventDefault();
       var clickedtarget = $(e.currentTarget);
       var page_number = clickedtarget.data('page_number');
-      prizeview.options.page = page_number;
-      this[prizeview.collection_control](e,page_number, this.options.class_id);
+      renderedview.options.page = page_number;
+      this[renderedview.collection_control](e,page_number, this.options.class_id);
       
     },
     render_page:function(total_pages, collection){
-        var ul = $('ul', $(prizeview.el));
+        var ul = $('ul', $(renderedview.el));
         
-        var handlebartemplate = Handlebars.compile(prizeview.user_template);
-        prizeview.element.find('.nav').empty();
-        if(prizeview.options.page > 1 && typeof prizeview.options.page != 'undefined'){
-          var previous = parseInt(prizeview.options.page)-1;
-          prizeview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
+        var handlebartemplate = Handlebars.compile(renderedview.user_template);
+        apply_date(renderedview.element);
+        renderedview.element.find('.nav').empty();
+        if(renderedview.options.page > 1 && typeof renderedview.options.page != 'undefined'){
+          var previous = parseInt(renderedview.options.page)-1;
+          renderedview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
         }
-        if(prizeview.options.page < total_pages && typeof prizeview.options.page != 'undefined'){
-          var next = parseInt(prizeview.options.page)+1;
-          prizeview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
+        if(renderedview.options.page < total_pages && typeof renderedview.options.page != 'undefined'){
+          var next = parseInt(renderedview.options.page)+1;
+          renderedview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
         }
-        prizeview.element.find("ul").html(handlebartemplate({prizes: collection})); 
+        var classroom = classrooms.get(renderedview.class_id).toJSON();
+        if(classroom.laps_entered == 1){
+          $(".laps_entered").hide();
+        }
+
+        
+        renderedview.element.find("ul").html(handlebartemplate({prizes: collection})); 
 
     },
     search:function(e){
-      prizeview.collection_control = "query_collection";
-      var keywords = $("#keywords").val();
-      var class_id = parseInt(class_id)
+      var target = $(e.currentTarget);
+      renderedview.collection_control = "query_collection";
+      var keywords = target.val();
+      var class_id = parseInt(this.options.class_id);
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = users.query({name: {$like: keywords }},{limit:5, page:page_number, pager:this.render_page});
+      var collection = users.query({name: {$like: keywords },classroom_id: class_id },{limit:10, page:page_number, pager:this.render_page});
       return collection;
-    }
+    },
+    set_lap:function(e){
+      e.preventDefault();
+      var target = $(e.currentTarget);
+      target.parent('div').find('input').val(target.data('laps'));
+      var laps = target.parent('div').find('input');
+      this.change_laps(laps, laps.val());
+    },
+    add_subtract:function(e){
+      e.preventDefault();
+      var target = $(e.currentTarget);
+      var change_by = target.data('change_by');
+      var laps = target.parent('div').find('input');
+      if (change_by == 'increase'){
+        var new_val = parseInt(laps.val())+1;
+      }else if(change_by == 'decrease'){
+        var new_val = parseInt(laps.val())-1;
+      }
 
-    
+      this.change_laps(laps, new_val);
+
+    },
+    change_laps:function(input, value){
+      input.val(value);
+      var user = users.get(input.attr('name'));
+      user.save( {laps:value, updated_at: $.now()},{
+        success:function(model,response){},
+        error:function(model,response){console.log(response);}
+      });
+      
+    },
+    laps_entered:function(e){
+      e.preventDefault();
+      var classroom = classrooms.get(this.options.class_id);
+      classroom.save({laps_entered:1},{
+        success:function(model, response){},
+        error:function(model,respone){console.log(response)}
+      });
+    }
 });
 
 window.user.prizes = Backbone.View.extend({
@@ -95,9 +143,8 @@ window.user.prizes = Backbone.View.extend({
         this.model.bind("change", this.render, this);
         this.model.bind("reset", this.render, this);
 
-        prizeview = this;
+        renderedview = this;
         this.element = $(this.el);
-
 
     },
     events:{
@@ -115,10 +162,10 @@ window.user.prizes = Backbone.View.extend({
         e.preventDefault();
       }
 
-      prizeview.collection_control = "query_collection";
+      renderedview.collection_control = "query_collection";
       var class_id = parseInt(class_id)
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = prizes.query({ user_id:parseInt(this.options.user_id)},{limit:5, page:page_number, pager:this.render_page});
+      var collection = prizes.query({ user_id:parseInt(this.options.user_id)},{limit:9, page:page_number, pager:this.render_page});
       return collection;
       
     },
@@ -126,9 +173,9 @@ window.user.prizes = Backbone.View.extend({
       if(e.which == 1){
         e.preventDefault();
       }
-      prizeview.collection_control = "delivered_prizes";
+      renderedview.collection_control = "delivered_prizes";
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = prizes.query({delivered:1 , user_id:parseInt(this.options.user_id)},{limit:10, page:page_number, pager:this.render_page});
+      var collection = prizes.query({delivered:1 , user_id:parseInt(this.options.user_id)},{limit:9, page:page_number, pager:this.render_page});
 
       return collection;
 
@@ -164,8 +211,10 @@ window.user.prizes = Backbone.View.extend({
     },
 
     render: function(eventName) {
-        prizeview.collection_control = typeof prizeview.collection_control !== 'undefined' ? prizeview.collection_control : "query_collection";
-        this[prizeview.collection_control]({},this.options.page, this.options.user_id);
+      if(renderedview == this){
+        renderedview.collection_control = typeof renderedview.collection_control !== 'undefined' ? renderedview.collection_control : "query_collection";
+        this[renderedview.collection_control]({},this.options.page, this.options.user_id);
+      }
 
     return this;
          
@@ -173,34 +222,34 @@ window.user.prizes = Backbone.View.extend({
     next_page:function(e){
       var clickedtarget = $(e.currentTarget);
       var page_number = clickedtarget.data('page_number');
-      prizeview.options.page = page_number;
-      this[prizeview.collection_control](e,page_number, this.options.user_id);
+      renderedview.options.page = page_number;
+      this[renderedview.collection_control](e,page_number, this.options.user_id);
       e.preventDefault();
     },
     previous_page:function(e){
       var clickedtarget = $(e.currentTarget);
       var page_number = clickedtarget.data('page_number');
-      prizeview.options.page = page_number;
-      this[prizeview.collection_control](e,page_number, this.options.user_id);
+      renderedview.options.page = page_number;
+      this[renderedview.collection_control](e,page_number, this.options.user_id);
       e.preventDefault();
     },
     render_page:function(total_pages, collection){
-        var ul = $('ul', $(prizeview.el));
-        prizeview.element.html(prizeview.template);
+        var ul = $('ul', $(renderedview.el));
+        renderedview.element.html(renderedview.template);
  
-
-        var handlebartemplate = Handlebars.compile(prizeview.element.find("#prizes").html());
-        if(prizeview.options.page > 1 && typeof prizeview.options.page != 'undefined'){
-          var previous = parseInt(prizeview.options.page)-1;
-          prizeview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
+        apply_date(renderedview.element);
+        var handlebartemplate = Handlebars.compile(renderedview.element.find("#prizes").html());
+        if(renderedview.options.page > 1 && typeof renderedview.options.page != 'undefined'){
+          var previous = parseInt(renderedview.options.page)-1;
+          renderedview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
         }
-        if(prizeview.options.page < total_pages && typeof prizeview.options.page != 'undefined'){
-          var next = parseInt(prizeview.options.page)+1;
-          prizeview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
+        if(renderedview.options.page < total_pages && typeof renderedview.options.page != 'undefined'){
+          var next = parseInt(renderedview.options.page)+1;
+          renderedview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
         }
-        prizeview.element.find("ul").html(handlebartemplate({prizes: collection})); 
+        renderedview.element.find("ul").html(handlebartemplate({prizes: collection})); 
 
-        prizeview.element.find("#header h2").html(users.get(prizeview.options.user_id).attributes.name);
+        renderedview.element.find("#header h2").html(users.get(renderedview.options.user_id).attributes.name);
 
     }
 
@@ -305,7 +354,6 @@ window.prize.livetile = Backbone.View.extend({
 
     initialize: function() {
 
-
     var tpl = window.templateLoader;
     this.template = _.template(tpl.get('prize_livetile'));
     _.bindAll(this, 'render');
@@ -326,5 +374,7 @@ window.prize.livetile = Backbone.View.extend({
     }
 
 });
+
+
 
 

@@ -1,25 +1,21 @@
-class EntriesController < ApplicationController
+class SupportrequestsController < ApplicationController
   # GET /entries
   # GET /entries.json
 
   require 'digest/md5'
   def index
-    @entries = Entry.all
+    @entries = SupportRequest.all
     entries = Array.new
     @entries.each do |entry|
-      if entry.delivered == false
-        delivered = 0
-      else
-        delivered = 1
-      end
+     
       entries << {
-        :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
-        :delivered => delivered,
+        :status => entry.status,
+        :student_id => entry.student_id,
+        :description => entry.description,
         :user_id => entry.user_id,
-        :name => entry.name,
-        :id => entry.id
+        :remote_id => entry.remote_id
       }
     end
     render json: entries
@@ -42,10 +38,11 @@ class EntriesController < ApplicationController
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
+        :status => entry.status,
+        :student_id => entry.student_id,
+        :description => entry.description,
         :user_id => entry.user_id,
-        :delivered => delivered,
-        :name => entry.name,
-        :id => entry.id
+        :remote_id => entry.remote_id
       }
     end
     render json: entries
@@ -60,19 +57,16 @@ class EntriesController < ApplicationController
     changed = Hash.new
     if @entries.count > 0 
     @entries.each do |entry|
-      if entry.delivered == false
-        delivered = 0
-      else
-        delivered = 1
-      end
+      
       entries << {
         :id => entry.id,
         :created_at => entry.created_at.to_i * 1000,
         :updated_at => entry.updated_at.to_i * 1000 ,
+        :status => entry.status,
+        :student_id => entry.student_id,
+        :description => entry.description,
         :user_id => entry.user_id,
-        :delivered => delivered,
-        :name => entry.name,
-        :id => entry.id
+        :remote_id => entry.remote_id
       }
     end
     changed['prizes'] = entries

@@ -70,8 +70,10 @@ Backbone.sync = function (method, model, options) {
             });
             break;
         case "update":
-            dao.update(model, function (data) {
+
+            dao.update(model,options, function (data) {
                 options.success(data);
+
             });
             break;
         case "delete":
@@ -91,7 +93,7 @@ window.startApp = function () {
     var prizeDAO = new prize.DAO(self.db,window.table);
     var classDAO = new classroom.DAO(self.db);
     var userDAO = new user.DAO(self.db);
-    
+    var supportDAO = new support_request.DAO(self.db);
 
     userDAO.check_existence(function () {
         userDAO.set_up_collections();
@@ -99,6 +101,10 @@ window.startApp = function () {
     });
     classDAO.check_existence(function () {
         classDAO.set_up_collections();
+
+    });
+    supportDAO.check_existence(function () {
+        supportDAO.set_up_collections();
 
     });
 
@@ -120,4 +126,91 @@ window.startApp = function () {
     
 
     
+}
+
+Handlebars.registerHelper('index_each', function(context, options) {
+  var fn = options.fn, inverse = options.inverse, ctx;
+  var ret = "";
+ 
+  if(context && context.length > 0) {
+    for(var i=0, j=context.length; i<j; i++) {
+      ctx = Object.create(context[i]);
+      ctx.index = i+1;
+      ret = ret + fn(ctx);
+    }
+  } else {
+    ret = inverse(this);
+  }
+  return ret;
+});
+
+function apply_date(el){
+  var currentTime = new Date();
+  var month = currentTime.getMonth();
+  var day = currentTime.getDate();
+  var monthNames = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ];
+  el.find(".date").text(monthNames[month]+" "+day);
+}
+
+
+
+support_request = {
+    init:function(){
+      sr = this;
+      this.btn = $(".support_btn");
+      this.container = $("#request_form_contain");
+      this.modal();
+      this.create();
+    },
+
+    modal:function(){
+      $("body").on("click",".support_btn", function(){
+        apply_date(sr.container);
+        $.colorbox({inline:true,  href:"#request_form" });
+        
+        return false;
+      });
+    }, 
+
+    create:function(){
+      $("#request_form ").submit(function(e){
+        e.preventDefault();
+        var student_id = $("#subject").val();
+        var status = $("#status").val();
+        var description = $("#description").val();
+
+        support_requests.create({
+          remote_id: CryptoJS.MD5($.now()+status+description+student_id),
+          student_id: student_id,
+          status: status,
+          description: description,
+          created_at: $.now(),
+          updated_at: $.now(),
+          user_id: 1
+        });
+      });
+    }
+
+}
+
+
+
+reminders ={
+    init:function(){
+      reminder = this;
+      this.btn = $(".reminders_btn");
+      this.modal();
+    },
+    modal:function(){
+      $("body").on("click",".reminders_btn", function(){
+        var container = $("#reminders");
+        var handlebartemplate = Handlebars.compile($("#my_request").html());
+        
+        $("#reminders").append(handlebartemplate({requests: support_requests.toJSON()})); 
+        $.colorbox({inline:true,  href:"#reminders" });
+        
+        return false;
+      });
+    }
 }

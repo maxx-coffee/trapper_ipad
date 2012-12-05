@@ -12,8 +12,9 @@
     <link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />
     <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />
     -->
-
+<link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="ipad/css/styles.css"/>
+    <link rel="stylesheet" href="ipad/css/colorbox.css"/>
 
 
     <!-- If your application is targeting iOS BEFORE 4.0 you MUST put json2.js from http://www.JSON.org/json2.js into your www directory and include it here -->
@@ -22,6 +23,40 @@
 </head>
 <body >
 
+<ul id="main_nav">
+  <li class="users active"><a href="#"><img src="/ipad/img/user_icon.png"><br>Users</a></li>
+  <li class="stats"><a href="#"><img src="/ipad/img/stats_icon.png"><br>Stats</a></li>
+  <li class="support"><a href="#"><img src="/ipad/img/support_icon.png"><br>Support</a></li>
+</ul>
+<div id="reminders_contain">
+  <ul id="reminders">
+    <script id="my_request" type="text/x-handlebars-template">
+      {{#index_each requests}}
+        <li>
+          <span class="number">{{index}}</span>
+          <span class="info">{{description}}</span>
+        </li>
+      {{/index_each}}
+    </script>
+    
+    
+  </ul>
+</div><!-- end reminders -->
+<div id="request_form_contain">
+  <form id="request_form">
+    <h2>Submit Support Request<span class="date"></span></h2>
+    <input type="text" placeholder="Subject" id="subject" name="subject">
+    <select name="status" id="status">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+    </select>
+    <textarea name="body" placeholder="Message..." id="description" cols="30" rows="10"></textarea>
+    <input id="submit" type="submit">
+  </form>
+</div><!-- end note_form -->
+<div id="content">
+    
+</div>
 <script src="http://127.0.0.1:3000/ipad/lib/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="/ipad/lib/handlebars.js"></script>
 <script src="http://127.0.0.1:3000/ipad/lib/underscore-min.js"></script>
@@ -29,6 +64,7 @@
 <script src="http://127.0.0.1:3000/ipad/lib/backbone-min.js"></script>
 <script src="http://127.0.0.1:3000/ipad/lib/backbone.relation.js"></script>
 <script src="http://127.0.0.1:3000/ipad/lib/resort.js"></script>
+<script type="text/javascript" src="/ipad/lib/jquery.colorbox-min.js"></script>
 
 <script src="http://127.0.0.1:3000/ipad/lib/md5.js"></script>
 <script type="text/javascript" src="http://127.0.0.1:3000/ipad/lib/query.min.js"></script>
@@ -38,10 +74,12 @@
 <script src="http://127.0.0.1:3000/ipad/js/sync.js"></script>
 <script src="http://127.0.0.1:3000/ipad/js/controllers/routes.js"></script>
 <script src="http://127.0.0.1:3000/ipad/js/models/prizemodel.js"></script>
+<script src="http://127.0.0.1:3000/ipad/js/models/supportmodel.js"></script>
 <script src="http://127.0.0.1:3000/ipad/js/models/classmodel.js"></script>
 <script src="http://127.0.0.1:3000/ipad/js/models/usermodel.js"></script>
 <script src="http://127.0.0.1:3000/ipad/js/views/userviews.js"></script>
 <script src="http://127.0.0.1:3000/ipad/js/views/classroomview.js"></script>
+
 <script type="text/javascript">
 
 
@@ -54,6 +92,8 @@
 
         $(function(){
             startApp();
+            support_request.init();
+            reminders.init();
         })
 
     </script>

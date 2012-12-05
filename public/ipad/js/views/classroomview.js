@@ -8,7 +8,7 @@ window.classroom.classrooms = Backbone.View.extend({
         this.model.bind("change", this.render, this);
         this.model.bind("reset", this.render, this);
 
-        classview = this;
+        renderedview = this;
         this.element = $(this.el);
 
 
@@ -22,21 +22,22 @@ window.classroom.classrooms = Backbone.View.extend({
     },
 
     render_page:function(total_pages, collection){
-        var ul = $('ul', $(classview.el));
-        classview.element.html(classview.template);
-        classview.element.append(this.pagination);
+        var ul = $('ul', $(renderedview.el));
+        renderedview.element.html(renderedview.template);
+        renderedview.element.append(this.pagination);
 
         
-        var handlebartemplate = Handlebars.compile(classview.element.find("#prizes").html());
-        if(classview.options.page > 1 && typeof classview.options.page != 'undefined'){
-          var previous = parseInt(classview.options.page)-1;
-          classview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
+        var handlebartemplate = Handlebars.compile(renderedview.element.find("#prizes").html());
+        apply_date(renderedview.element);
+        if(renderedview.options.page > 1 && typeof renderedview.options.page != 'undefined'){
+          var previous = parseInt(renderedview.options.page)-1;
+          renderedview.element.find('.nav').append('<a href="#" data-page_number="'+previous+'" class="previous">Previous</a> ');
         }
-        if(classview.options.page < total_pages && typeof classview.options.page != 'undefined'){
-          var next = parseInt(classview.options.page)+1;
-          classview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
+        if(renderedview.options.page < total_pages && typeof renderedview.options.page != 'undefined'){
+          var next = parseInt(renderedview.options.page)+1;
+          renderedview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
         }
-        classview.element.find("ul").html(handlebartemplate({prizes: collection})); 
+        renderedview.element.find("ul").html(handlebartemplate({prizes: collection})); 
         
     }
 

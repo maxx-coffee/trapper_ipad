@@ -62,7 +62,7 @@ window.AppRouter = Backbone.Router.extend({
         console.log('showView: ' + view);
         if (this.currentView)
             this.currentView.close();
-        $('body').html(view.render().el);
+        $('body #content').html(view.render().el);
         this.currentView = view;
         return view;
     },

@@ -1,21 +1,35 @@
 <div id="header">
-  <h2>Users</h2>
+  <h2>Students<br><span>Classroom Name <a href="#" class="laps_entered">Laps Entered</a></span></h2>
   <form id="search">
     <input name="keywords" id="keywords" type="text">
   </form>
+  <div class="support_btns">
+    <a href="#" class="reminders_btn"></a>
+    <a href="#" class="support_btn"></a>
+  </div>
+  <span class="date">
+  </span>
 </div>
 <div class="content">
     <ul class="listing">
       <script id="prizes" type="text/x-handlebars-template">
         {{#each prizes}}
         <li>
-        <a href='#user/{{this.attributes.id}}/prizes'>{{this.attributes.name}} {{this.attributes.classroom_id}} </a>
-        <a href='#user/{{this.attributes.id}}/prizes' id="{{this.attributes.id}}" class='btn undeliver'>Prizes</a>
-        <a href='#user/{{this.attributes.id}}/pledges' id="{{this.attributes.id}}" class='btn deliver'>Pledges</a>
+        
+        <a href='#user/{{this.attributes.id}}/prizes'>{{this.attributes.name}}</a>
+        <div class="lap_widget">
+        <a href="#" data-laps="29" class="lap_btn">29</a>
+        <a href="#" data-laps="32" class="lap_btn">32</a>
+        <a href="#" data-laps="35" class="lap_btn">35</a>
+        <input type="text" name="{{this.attributes.id}}" value="{{this.attributes.laps}}">
+        <a href="#" data-change_by="increase" class="increment increase ">+</a>
+        <a href="#" data-change_by="decrease" class="increment decrease">-</a>
+        </div>
         {{/each}}
         </li>
       </script>
     </ul>
+    
 </div>
 <div  class="nav">
 	

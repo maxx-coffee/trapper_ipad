@@ -5,7 +5,7 @@ window.serversync = function(db){
     if(this.timestamp == null){
         this.reset_timestamp();
     }
-    this.collections = ['prizes'];
+    this.collections = ['prizes','users'];
               
 
 }
@@ -18,7 +18,7 @@ serversync.prototype = {
        
     },
     check_for_updates:function(){
-
+      localupdates = [];
       
       $.each(self.collections,function(k,v){
         var collection = window[v];
@@ -28,7 +28,7 @@ serversync.prototype = {
             updated_at:{$gt: self.timestamp}
           }
         });
-        var updates = [];
+        
         var entries =[];
         
         
@@ -38,11 +38,13 @@ serversync.prototype = {
           $.each(data,function(k,v){
             entries.push(v.attributes);
           });
-          updates[v] = entries;
+          localupdates[v] = entries;
         }
 
-        if(self.objectSize(updates) > 0){self.post_updates(updates)}
+        
       });
+      if(self.objectSize(localupdates) > 0){self.post_updates(localupdates)}
+      console.log(localupdates);
       
       
     },
@@ -63,7 +65,6 @@ serversync.prototype = {
      
     },
     check_server_new:function(callback){
-      console.log('http://127.0.0.1:3000/entries/added/'+self.timestamp);
       $.get('http://127.0.0.1:3000/entries/added/'+self.timestamp, function(data) {
         console.log(data);
         var collection = window.prizes;
@@ -77,14 +78,19 @@ serversync.prototype = {
     },
     check_server_updates:function(){
       console.log(self.timestamp);
-        console.log('http://127.0.0.1:3000/entries/updated/'+self.timestamp);
         $.get('http://127.0.0.1:3000/entries/updated/'+self.timestamp, function(data) {
-          console.log(data);
-          var collection = window.prizes;
-          $.each(data,function(i, row){
-           collection.create(row);
-          });
+            console.log(data);
+
+            $.each(data,function(k,v){
+
+              var collection = window[k];
+              $.each(v,function(i, row){
+               collection.create(row);
+              });
+              collection.fetch();
+            });
           
+
         });
         
         
