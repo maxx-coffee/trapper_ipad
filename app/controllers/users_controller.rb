@@ -5,20 +5,8 @@ class UsersController < ApplicationController
   require 'digest/md5'
   def index
     @users = User.all
-    users = Array.new
-    @users.each do |entry|
-      
-      users << {
-        :id => entry.id,
-        :created_at => entry.created_at.to_i * 1000,
-        :updated_at => entry.updated_at.to_i * 1000 ,
-        :laps => entry.laps,
-        :classroom_id => entry.classroom_id,
-        :name => entry.name,
-        :id => entry.id
-      }
-    end
-    render json: users
+    
+    render json: @users
   end
   def status
     render json: {status:"ok"} 

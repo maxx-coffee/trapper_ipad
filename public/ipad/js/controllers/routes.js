@@ -15,6 +15,7 @@ window.AppRouter = Backbone.Router.extend({
         var self = this;
         this.page =   typeof page !== 'undefined' ? page : 1;
         this.before(function () {
+            window.classrooms.storage.sync.pull();
             self.showView(new classroom.classrooms({model:classrooms, page:self.page}));
         });
     },
@@ -23,8 +24,8 @@ window.AppRouter = Backbone.Router.extend({
         console.log("route: list ");
         var self = this;
         this.page =   typeof page !== 'undefined' ? page : 1;
-        
         this.before(function () {
+              window.users.storage.sync.pull();
               self.showView(new user.users({model:users, class_id:remote_id, page:self.page}));
             
         });

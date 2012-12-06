@@ -11,6 +11,9 @@ window.classroom.model = Backbone.RelationalModel.extend({
 window.classroom.collection = Backbone.QueryCollection.extend({
 	model: classroom.model,
     url: "/classrooms",
+    initialize: function(){
+      this.storage = new Offline.Storage('classroom', this)
+    },
     
     comparator: function(model){
       return -model.get("created_at");
@@ -22,4 +25,5 @@ window.classroom.collection = Backbone.QueryCollection.extend({
 
 window.classrooms = new classroom.collection;
 window.classrooms.fetch();
+
 

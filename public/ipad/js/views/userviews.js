@@ -29,7 +29,7 @@ window.user.users = Backbone.View.extend({
 
     query_collection:function(e,page_number, class_id){
       renderedview.collection_control = "query_collection";
-      var class_id = this.class_id;
+      var class_id = parseInt(class_id)
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
       var collection = users.query({classroom_id:class_id},{limit:10, page:page_number, pager:this.render_page});
 
@@ -75,10 +75,8 @@ window.user.users = Backbone.View.extend({
           var next = parseInt(renderedview.options.page)+1;
           renderedview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
         }
-        var classroom = classrooms.get(renderedview.class_id).toJSON();
-        if(classroom.laps_entered == 1){
-          $(".laps_entered").hide();
-        }
+
+        //var classroom = classrooms.get(this.options.class_id);
 
         
         renderedview.element.find("ul").html(handlebartemplate({prizes: collection})); 
@@ -145,6 +143,7 @@ window.user.prizes = Backbone.View.extend({
 
         renderedview = this;
         this.element = $(this.el);
+        this.student = users.query({sid:parseInt(this.options.user_id)},{limit:1})[0];
 
     },
     events:{
@@ -248,8 +247,8 @@ window.user.prizes = Backbone.View.extend({
           renderedview.element.find('.nav').append('<a href="#" data-page_number="'+next+'" class="next">Next</a> ');
         }
         renderedview.element.find("ul").html(handlebartemplate({prizes: collection})); 
-
-        renderedview.element.find("#header h2").html(users.get(renderedview.options.user_id).attributes.name);
+        console.log(renderedview.student);
+        renderedview.element.find("#header h2").html(renderedview.student.attributes.name);
 
     }
 

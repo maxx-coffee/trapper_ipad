@@ -8,6 +8,9 @@ window.user.model = Backbone.Model.extend({
 window.user.collection = Backbone.QueryCollection.extend({
 	model: user.model,
     url: "/users",
+    initialize: function(){
+      this.storage = new Offline.Storage('user', this)
+    },
     
     comparator: function(model){
       return -model.get("created_at");

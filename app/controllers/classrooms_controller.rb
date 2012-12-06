@@ -5,17 +5,8 @@ class ClassroomsController < ApplicationController
   require 'digest/md5'
   def index
     @classrooms = Classroom.all
-    classrooms = Array.new
-    @classrooms.each do |classroom|
-      
-      classrooms << {
-        :created_at => classroom.created_at.to_i * 1000,
-        :updated_at => classroom.updated_at.to_i * 1000 ,
-        :name => classroom.name,
-        :id => classroom.id
-      }
-    end
-    render json: classrooms
+    
+    render json: @classrooms
   end
   def status
     render json: {status:"ok"} 

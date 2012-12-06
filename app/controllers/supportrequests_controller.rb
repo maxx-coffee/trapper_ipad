@@ -5,20 +5,8 @@ class SupportrequestsController < ApplicationController
   require 'digest/md5'
   def index
     @entries = SupportRequest.all
-    entries = Array.new
-    @entries.each do |entry|
-     
-      entries << {
-        :created_at => entry.created_at.to_i * 1000,
-        :updated_at => entry.updated_at.to_i * 1000 ,
-        :status => entry.status,
-        :student_id => entry.student_id,
-        :description => entry.description,
-        :user_id => entry.user_id,
-        :remote_id => entry.remote_id
-      }
-    end
-    render json: entries
+    
+    render json: @entries
   end
   def status
     render json: {status:"ok"} 
@@ -135,32 +123,18 @@ class SupportrequestsController < ApplicationController
   end
 
   def create
-    /#
-    params[:entries].each do |entry|
-      entry = ActiveSupport::JSON.decode(entry)
-      @entry = Entry.new(entry)
-      if @entry.remote_id.nil?
-        @entry.remote_id = Digest::MD5.hexdigest("#{Time.now.to_s}")
-      end
-      @entry.save
-    end
-    render json: @entries
-    #/
-    @entry = Entry.new(params[:entry])
-    @entry.classroom_id = "5121d1570117d3209fefcf32dcd329a0";
-    @entry.remote_id = Digest::MD5.hexdigest("#{Time.now.to_s}")
-    if @entry.delivered.nil?
-      @entry.delivered = false
-    end
+    
+    @entry = SupportRequest.new(params)
     @entry.save
     render json: @entry
+
     
   end
 
   # PATCH/PUT /entries/1
   # PATCH/PUT /entries/1.json
   def update
-    @entry = Entry.find(params[:id])
+    @entry = SupportRequest.find(params[:id])
 
     if @entry.update_attributes(params[:entry])
       head :no_content

@@ -35,3 +35,4 @@ Api::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 end
+ActiveRecord::Base.send(:attr_accessible, nil)

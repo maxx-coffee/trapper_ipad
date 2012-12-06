@@ -7,7 +7,9 @@ window.prize.model = Backbone.RelationalModel.extend({
 window.prize.collection = Backbone.QueryCollection.extend({
 	model: prize.model,
 	url: "/entries/",
-    
+    initialize: function(){
+      this.storage = new Offline.Storage('prize', this)
+    },
     comparator: function(model){
       return -model.get("created_at");
     } 

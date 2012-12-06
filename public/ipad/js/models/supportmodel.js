@@ -9,6 +9,9 @@ window.support_request.model = Backbone.RelationalModel.extend({
 window.support_request.collection = Backbone.QueryCollection.extend({
 	model: support_request.model,
     url: '/supportrequests',
+    initialize: function(){
+      this.storage = new Offline.Storage('support_request', this)
+    },
     comparator: function(model){
       return -model.get("date");
     } 
@@ -17,5 +20,5 @@ window.support_request.collection = Backbone.QueryCollection.extend({
 
 window.support_requests = new support_request.collection;
 window.support_requests.fetch(); 
-alert(support_requests);
+
 

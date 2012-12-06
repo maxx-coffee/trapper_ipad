@@ -121,7 +121,6 @@ support_request = {
         var description = $("#description").val();
 
         support_requests.create({
-          remote_id: CryptoJS.MD5($.now()+status+description+student_id),
           student_id: student_id,
           status: status,
           description: description,
@@ -129,6 +128,7 @@ support_request = {
           updated_at: $.now(),
           user_id: 1
         });
+        support_requests.storage.sync.push();
       });
     }
 

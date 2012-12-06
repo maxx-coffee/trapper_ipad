@@ -5,24 +5,9 @@ class EntriesController < ApplicationController
   require 'digest/md5'
   def index
     @entries = Entry.all
-    entries = Array.new
-    @entries.each do |entry|
-      if entry.delivered == false
-        delivered = 0
-      else
-        delivered = 1
-      end
-      entries << {
-        :id => entry.id,
-        :created_at => entry.created_at.to_i * 1000,
-        :updated_at => entry.updated_at.to_i * 1000 ,
-        :delivered => delivered,
-        :user_id => entry.user_id,
-        :name => entry.name,
-        :id => entry.id
-      }
-    end
-    render json: entries
+
+    
+    render json: @entries
   end
   def status
     render json: {status:"ok"} 
