@@ -13,8 +13,8 @@ window.serversync = function(db){
 serversync.prototype = {
     init:function(){
       this.check_for_updates();
-      this.check_server_updates();
-      this.check_server_new(function(){self.reset_timestamp()});
+      this.check_server_updates(function(){self.reset_timestamp()});
+      //this.check_server_new();
        
     },
     check_for_updates:function(){
@@ -65,7 +65,9 @@ serversync.prototype = {
      
     },
     check_server_new:function(callback){
+
       $.get('http://127.0.0.1:3000/entries/added/'+self.timestamp, function(data) {
+
         console.log(data);
         var collection = window.prizes;
         $.each(data,function(i, row){
@@ -79,21 +81,28 @@ serversync.prototype = {
     check_server_updates:function(){
       console.log(self.timestamp);
         $.get('http://127.0.0.1:3000/entries/updated/'+self.timestamp, function(data) {
-            console.log(data);
-
-            $.each(data,function(k,v){
-
-              var collection = window[k];
-              $.each(v,function(i, row){
-               collection.create(row);
+             user.userDAO.populate(function () {
+                     window.users.fetch();
               });
-              collection.fetch();
-            });
-          
+             prize.prizeDAO.populate(function () {
+                     window.prizes.fetch();
+              });
+             
+             classroom.classDAO.populate(function () {
+                 classrooms.fetch();
+
+             });
+
+             support_request.supportDAO.populate(function () {
+                 support_requests.fetch();
+
+             });
+           
+              
 
         });
         
-        
+        callback();
     },
     get_last_update:function(table){
 

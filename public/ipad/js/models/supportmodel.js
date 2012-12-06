@@ -114,7 +114,7 @@ _.extend(window.support_request.DAO.prototype, {
                     var len = results.rows.length;
 
                     if(len <= 0){
-                      support_request.classDAO.populate();
+                      support_request.supportDAO.populate();
                     }
                     
                 });

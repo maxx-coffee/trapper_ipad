@@ -33,7 +33,7 @@ _.extend(window.user.DAO.prototype, {
     },
 
     update:function (model,options, callback) {
-        alert("update");
+
         console.log(options);
         var model_atts = model.toJSON();
         var model_json = JSON.stringify(model_atts);
@@ -133,8 +133,9 @@ _.extend(window.user.DAO.prototype, {
                     //alert("'"+row.remote_id+"','"+row.title+"','test','"+row.created_at+"','"+row.created_at+"'");
                     tx.executeSql("INSERT INTO users VALUES ('"+row.id+"','"+row.name+"','"+row.classroom_id+"','"+row.laps+"',"+row.created_at+","+row.created_at+")");
                 });
-                
+                if (callback){
                 callback();
+            }
                 
             },
 

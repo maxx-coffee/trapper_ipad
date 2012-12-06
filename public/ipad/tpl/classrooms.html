@@ -14,8 +14,8 @@
       <script id="prizes" type="text/x-handlebars-template">
         {{#each prizes}}
         <li>
-        <a href='#prizes/class/{{this.attributes.id}}'>{{this.attributes.name}}</a>
-        
+        <a href='#prizes/class/{{this.attributes.id}}'>{{this.attributes.name}} </a>
+        {{#if_eq  this.attributes.laps_entered compare=1}} Laps have been entered {{/if_eq}}
         {{/each}}
         </li>
       </script>
