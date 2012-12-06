@@ -48,78 +48,18 @@ Backbone.View.prototype.close = function () {
     this.unbind();
 };
 
-Backbone.sync = function (method, model, options) {
 
-    var dao = new model.dao(window.db);
-    var table = window.table;
-
-    switch (method) {
-        case "read":
-            if (model.id)
-                dao.find(model, function (data) {
-                    options.success(data);
-                });
-            else
-                dao.findAll(function (data) {
-                    options.success(data);
-                });
-            break;
-        case "create":
-            dao.create(model, function (data) {
-                options.success(data);
-            });
-            break;
-        case "update":
-
-            dao.update(model,options, function (data) {
-                options.success(data);
-
-            });
-            break;
-        case "delete":
-            dao.destroy(model, function (data) {
-                options.success(data);
-            });
-            break;
-    }
-
-};
 
 window.startApp = function () {
     var self = this;
     console.log('open database');
-    window.db = window.openDatabase("funrun", "1.0", "funrun local db", 200000);
-
-    var prizeDAO = new prize.DAO(self.db,window.table);
-    var classDAO = new classroom.DAO(self.db);
-    var userDAO = new user.DAO(self.db);
-    var supportDAO = new support_request.DAO(self.db);
-
-    userDAO.check_existence(function () {
-        userDAO.set_up_collections();
-
-    });
-    classDAO.check_existence(function () {
-        classDAO.set_up_collections();
-
-    });
-    supportDAO.check_existence(function () {
-        supportDAO.set_up_collections();
-
-    });
-
-    prizeDAO.check_existence(function () {
-        prizeDAO.set_up_collections();
-        this.templateLoader.load(['users','prizes', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
-            self.app = new AppRouter();
-            Backbone.history.start();
-            var tablesync = new serversync(db);
-            setInterval(function(){
-                tablesync.init();
-            },10000);
-        });
-
-    });
+    
+    
+    window.templateLoader.load(['users','prizes', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
+                self.app = new AppRouter();
+                Backbone.history.start();
+                
+            });
 
 
 
