@@ -6,7 +6,7 @@ class SupportrequestsController < ApplicationController
   def index
     @entries = SupportRequest.all
     
-    render json: @entries
+    render json: @entries, :callback => params[:callback]
   end
   def status
     render json: {status:"ok"} 
