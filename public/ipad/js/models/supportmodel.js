@@ -2,7 +2,7 @@ window.support_request = window.support_request || {};
 
 
 window.support_request.model = Backbone.RelationalModel.extend({
-  url: '/supportrequests'
+  url: 'http://glacial-lake-7767.herokuapp.com/supportrequests'
 
 });
 

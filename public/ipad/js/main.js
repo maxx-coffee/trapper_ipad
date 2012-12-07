@@ -124,11 +124,9 @@ support_request = {
           student_id: student_id,
           status: status,
           description: description,
-          created_at: $.now(),
-          updated_at: $.now(),
           user_id: 1
         });
-        support_requests.storage.sync.push();
+        support_requests.storage.sync.incremental();
       });
     }
 
