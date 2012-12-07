@@ -17,7 +17,7 @@ window.classroom.classrooms = Backbone.View.extend({
     render: function(eventName) {
 
       var page_number = typeof page_number !== 'undefined' ? page_number : 1;
-      var collection = classrooms.query({},{limit:10, page:page_number, pager:this.render_page});
+      var collection = classrooms.query({},{limit:9, page:page_number, pager:this.render_page});
 
       return this;
     },

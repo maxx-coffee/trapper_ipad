@@ -6,8 +6,12 @@ gem 'rails', '3.2.8'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'rails-api'
-
-gem 'pg'
+group :development do
+  gem 'sqlite3'
+end
+group :production do
+	gem 'pg'
+end
 gem 'rack-cors', :require => 'rack/cors'
 
 

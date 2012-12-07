@@ -1,4 +1,6 @@
 Api::Application.routes.draw do
+  resources :programs, except: :edit
+
   resources :entries
   resources :classrooms
   resources :users
