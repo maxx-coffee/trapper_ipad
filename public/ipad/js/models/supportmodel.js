@@ -8,7 +8,7 @@ window.support_request.model = Backbone.RelationalModel.extend({
 
 window.support_request.collection = Backbone.QueryCollection.extend({
 	model: support_request.model,
-    url: 'http://glacial-lake-7767.herokuapp.com/supportrequests?callback=request',
+    url: 'http://glacial-lake-7767.herokuapp.com/supportrequests',
     initialize: function(){
       this.storage = new Offline.Storage('support_request', this)
     },
