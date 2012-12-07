@@ -8,6 +8,7 @@ gem 'rails', '3.2.8'
 gem 'rails-api'
 
 gem 'pg'
+gem 'rack-cors', :require => 'rack/cors'
 
 
 # To use ActiveModel has_secure_password
