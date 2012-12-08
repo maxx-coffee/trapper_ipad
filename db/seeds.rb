@@ -11,18 +11,21 @@ Entry.delete_all
 Classroom.delete_all
 User.delete_all
 SupportRequest.delete_all
+Program.delete_all
 i = 0
-
+3.times do |program, index|
+program = Program.create(:name => "program #{program}")
 10.times do |entry,index|
-	classroom = Classroom.create( :name => "class #{entry}")
+	classroom = Classroom.create( :name => "class #{entry}", :program_id => program.id)
 
 	10.times do |entry,index|
 		
 		user = User.create( :name => "user #{entry}", :laps => 30,  :classroom_id => classroom.id)
-		SupportRequest.create( :date => DateTime.now, :status => "open", :student_id => user.id, :description => "this description will be truncated to allow the max amount of reminders on this list", :user_id => 1, :remote_id => Digest::MD5.hexdigest("#{Time.now.to_s}#{entry}"))
+		SupportRequest.create( :date => DateTime.now, :status => "open", :student_id => user.id, :description => "this description will be truncated to allow the max amount of reminders on this list", :user_id => 1)
 		10.times do |entry, index|
 		  i = i + 1
 		  Entry.create( :name => "prize #{i}", :delivered => 0, :user_id => user.id)
 		end
 	end
+end
 end

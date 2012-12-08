@@ -38,6 +38,7 @@ window.user.users = Backbone.View.extend({
     
 
     render: function(eventName) {
+      $("#main_nav").show();
         if (renderedview == this){
           renderedview.collection_control = typeof renderedview.collection_control !== 'undefined' ? renderedview.collection_control : "query_collection";
           this[renderedview.collection_control]({},this.options.page, this.options.class_id);
