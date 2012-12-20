@@ -52,10 +52,9 @@ Backbone.View.prototype.close = function () {
 
 window.startApp = function () {
     var self = this;
-    console.log('open database');
     
     
-    window.templateLoader.load(['users','prizes', 'wine-details', 'new','edit', 'prize_livetile', 'classrooms'], function () {
+    window.templateLoader.load(['users','prizes','classrooms','programs'], function () {
                 self.app = new AppRouter();
                 Backbone.history.start();
                 

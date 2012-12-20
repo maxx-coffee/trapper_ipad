@@ -20,11 +20,11 @@ program = Program.create(:name => "program #{program}")
 
 	10.times do |entry,index|
 		
-		user = User.create( :name => "user #{entry}", :laps => 30,  :classroom_id => classroom.id)
+		user = User.create( :name => "user #{entry}", :laps => 30,  :classroom_id => 271)
 		SupportRequest.create( :date => DateTime.now, :status => "open", :student_id => user.id, :description => "this description will be truncated to allow the max amount of reminders on this list", :user_id => 1)
-		10.times do |entry, index|
+		5.times do |entry, index|
 		  i = i + 1
-		  Entry.create( :name => "prize #{i}", :delivered => 0, :user_id => user.id)
+		  Entry.create( :name => "prize #{i}", :delivered => 0, :classroom_id => 271)
 		end
 	end
 end

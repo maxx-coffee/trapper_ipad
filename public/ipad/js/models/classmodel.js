@@ -4,13 +4,13 @@ window.classroom = window.classroom || {};
 
 
 window.classroom.model = Backbone.RelationalModel.extend({
-    url:"/classrooms"
+    url:"https://tk.epiclabs.com/api/classrooms/89f138dd4c4021198516cd12b594f6a5"
 
 });
 
 window.classroom.collection = Backbone.QueryCollection.extend({
 	model: classroom.model,
-    url: "/classrooms",
+    url: "https://tk.epiclabs.com/api/classrooms/89f138dd4c4021198516cd12b594f6a5",
     initialize: function(){
       this.storage = new Offline.Storage('classroom', this)
     },

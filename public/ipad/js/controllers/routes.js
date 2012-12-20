@@ -1,32 +1,54 @@
 window.AppRouter = Backbone.Router.extend({
 
     routes:{
-        "":"classrooms",
-        "classrooms":"classrooms",
-        "prizes/class/:remote_id":"users",
+        "":"programs",
+        "program/:program_id":"classrooms",
+        "program/:program_id/classroom/:classroom_id/students":"users",
+        "program/:program_id/classroom/:classroom_id":"classroom",
         "user/:user_id/prizes":"prizes",
         "wines/:remote_id":"wineDetails",
         "newentry":"newEntry",
         "editentry/:remote_id":"editEntry"
     },
 
-    classrooms:function (page) {
-        console.log("route: list ");
+    programs:function () {
         var self = this;
         this.page =   typeof page !== 'undefined' ? page : 1;
         this.before(function () {
-            window.classrooms.storage.sync.pull();
-            self.showView(new classroom.classrooms({model:classrooms, page:self.page}));
+            window.programs.storage.sync.pull();
+            self.showView(new program.programs({model:programs, page:self.page}));
         });
     },
 
-    users:function (remote_id,page) {
+    classrooms:function (program_id, page) {
+        var self = this;
+        this.page =   typeof page !== 'undefined' ? page : 1;
+        this.before(function () {
+
+            window.prizes.storage.sync.pull();
+            self.showView(new classroom.classrooms({model:classrooms,program_id:program_id, page:self.page}));
+        });
+    },
+    classroom:function(program_id,classroom_id){
+        alert(classroom_id);
+        var self = this;
+        this.page =   typeof page !== 'undefined' ? page : 1;
+        this.before(function () {
+            window.prizes.storage.sync.pull();
+
+            $(".users a").attr("href","/ipad#program/"+program_id+"/classroom/"+classroom_id+"/students");
+            $(".prizes a").attr("href", "/ipad#program/"+program_id+"/classroom/"+classroom_id)
+            self.showView(new classroom.prizes({model:prizes,class_id:classroom_id, page:self.page}));
+        });
+    },
+
+    users:function (program_id,classroom_id) {
         console.log("route: list ");
         var self = this;
         this.page =   typeof page !== 'undefined' ? page : 1;
         this.before(function () {
               window.users.storage.sync.pull();
-              self.showView(new user.users({model:users, class_id:remote_id, page:self.page}));
+              self.showView(new user.users({model:users, class_id:classroom_id, page:self.page}));
             
         });
     },
